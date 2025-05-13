@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as stl
 import os
 from dotenv import load_dotenv
 
@@ -20,8 +20,8 @@ def initialize_model(model_name: str) -> ChatGroq:
     try:
         return ChatGroq(groq_api_key=groq_api_key, model_name=model_name)
     except Exception as e:
-        st.error(f"Error initializing model: {e}")
-        st.stop()
+        stl.error(f"Error initializing model: {e}")
+        stl.stop()
 
 def restore_memory_from_history(memory, history: list):
     """Reconstruct memory from saved session history."""
@@ -34,18 +34,18 @@ def restore_memory_from_history(memory, history: list):
 def display_chat_history(history: list):
     """Render the entire chat history."""
     for message in history:
-        with st.chat_message("user"):
-            st.write(message['human'])
-        with st.chat_message("assistant"):
-            st.write(message['AI'])
+        with stl.chat_message("user"):
+            stl.write(message['human'])
+        with stl.chat_message("assistant"):
+            stl.write(message['AI'])
 
 def main():
     """Main function to launch the Streamlit chatbot UI."""
-    st.title("🤖 Welcome to Srika – Your Personal AI Chatterbot")
-    st.sidebar.title('Model Selection')
+    stl.title("🤖 Welcome to Srika – Your Personal AI Chatterbot")
+    stl.sidebar.title('Model Selection')
 
     # Sidebar options
-    selected_model = st.sidebar.selectbox(
+    selected_model = stl.sidebar.selectbox(
         'Pick your poison:',
         [
             'mistral-saba-24b',
@@ -56,7 +56,7 @@ def main():
         ]
     )
 
-    memory_length = st.sidebar.slider(
+    memory_length = stl.sidebar.slider(
         'Conversational memory length:', min_value=1, max_value=10, value=5
     )
 
@@ -64,11 +64,11 @@ def main():
     memory = initialize_memory(memory_length)
 
     if 'chat_history' not in st.session_state:
-        st.session_state.chat_history = []
+        stl.session_state.chat_history = []
     else:
         restore_memory_from_history(memory, st.session_state.chat_history)
 
-    user_input = st.chat_input("Say anything...")
+    user_input = stl.chat_input("Say anything...")
 
     # Set up the conversation chain
     chat_model = initialize_model(selected_model)
@@ -81,10 +81,10 @@ def main():
 
         # Store new exchange in session state
         new_message = {'human': user_input, 'AI': ai_reply}
-        st.session_state.chat_history.append(new_message)
+        stl.session_state.chat_history.append(new_message)
 
         # Display latest response
-        st.write("Chatbot:", ai_reply)
+        stl.write("Chatbot:", ai_reply)
 
     # Show full chat history
     display_chat_history(st.session_state.chat_history)
